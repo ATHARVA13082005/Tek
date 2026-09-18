@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Score Tracker</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f9c66d, #ffa87c);
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            text-shadow: 2px 2px 3px #555;
+            margin-top: 40px;
+        }
+
+        .container {
+            width: 70%;
+            margin: 30px auto;
+        }
+
+        form {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        input {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #eeeeee;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #error {
+            color: red;
+            font-weight: bold;
+            margin: 25px;
+        }
+
+        #studentList {
+            list-style: none;
+            padding: 0;
+            margin-top: 30px;
+        }
+
+        #studentList li {
+            background-color: #ffe7cb;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: left;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        #average {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 45px;
+            text-shadow: 2px 2px 3px #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎓 Student Score Tracker</h1>
+
+    <div class="container">
+
+        <form id="studentForm">
+
+            <input
+                type="text"
+                id="studentName"
+                placeholder="Student Name">
+
+            <input
+                type="number"
+                id="score"
+                placeholder="Score">
+
+            <button type="submit">Add</button>
+
+        </form>
+
+        <div id="error"></div>
+
+        <ul id="studentList"></ul>
+
+        <div id="average">
+            Average Score: 0
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Array to store student records
+        let students = [];
+
+
+        // Get elements from DOM
+        const form = document.getElementById("studentForm");
+        const nameInput = document.getElementById("studentName");
+        const scoreInput = document.getElementById("score");
+        const studentList = document.getElementById("studentList");
+        const error = document.getElementById("error");
+        const average = document.getElementById("average");
+
+
+        // Handle form submission
+        form.addEventListener("submit", function(event) {
+
+            // Prevent page reload
+            event.preventDefault();
+
+            let name = nameInput.value.trim();
+            let score = Number(scoreInput.value);
+
+
+            // Clear previous error
+            error.textContent = "";
+
+
+            // Validate student name
+            if (name === "") {
+                error.textContent = "Student name cannot be empty";
+                return;
+            }
+
+
+            // Validate score
+            if (scoreInput.value === "" || isNaN(score)) {
+                error.textContent = "Score must be a valid number";
+                return;
+            }
+
+
+            // Negative score validation
+            if (score < 0) {
+                error.textContent = "Score cannot be negative";
+                return;
+            }
+
+
+            // Store data in array
+            students.push({
+                name: name,
+                score: score
+            });
+
+
+            // Clear input fields
+            nameInput.value = "";
+            scoreInput.value = "";
+
+
+            // Update the display
+            displayStudents();
+
+        });
+
+
+        // Function to display students
+        function displayStudents() {
+
+            // Clear existing list
+            studentList.innerHTML = "";
+
+
+            // Add students from array
+            students.forEach(function(student, index) {
+
+                let li = document.createElement("li");
+
+                li.textContent =
+                    student.name + " - " + student.score;
+
+
+                // Double-click to delete
+                li.addEventListener("dblclick", function() {
+
+                    // Remove from array first
+                    students.splice(index, 1);
+
+                    // Update list and average
+                    displayStudents();
+
+                });
+
+
+                // Add li to DOM
+                studentList.appendChild(li);
+
+            });
+
+
+            // Calculate average
+            updateAverage();
+
+        }
+
+
+        // Function to calculate average
+        function updateAverage() {
+
+            if (students.length === 0) {
+
+                average.textContent = "Average Score: 0";
+
+                return;
+            }
+
+
+            let total = 0;
+
+
+            students.forEach(function(student) {
+
+                total += student.score;
+
+            });
+
+
+            let avg = total / students.length;
+
+
+            average.textContent =
+                "Average Score of " +
+                students.length +
+                " Students: " +
+                avg.toFixed(2);
+
+        }
+
+    </script>
+
+</body>
+</html>
